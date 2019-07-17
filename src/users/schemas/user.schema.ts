@@ -14,7 +14,3 @@ UserSchema.pre('save', async function(next) {
 
   next();
 });
-
-UserSchema.methods.comparePassword = (password: string): boolean => {
-  return true;
-};

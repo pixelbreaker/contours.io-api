@@ -13,8 +13,12 @@ export class UsersService {
     return await this.userModel.find();
   }
 
-  async findOne(id: string): Promise<User> {
+  async findOne(id: string): Promise<User | undefined> {
     return await this.userModel.findOne({ _id: id });
+  }
+
+  async findOneByEmail(email: string): Promise<User | undefined> {
+    return await this.userModel.findOne({ email });
   }
 
   @UseFilters(BadRequestFilter, MongoFilter)
