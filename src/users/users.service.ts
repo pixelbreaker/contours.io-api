@@ -20,9 +20,6 @@ export class UsersService {
   @UseFilters(BadRequestFilter, MongoFilter)
   async create(user: User): Promise<User> {
     const newUser = new this.userModel(user);
-    // const valid = await newUser.validate();
-    // console.log(valid);
-
     return await newUser.save();
   }
 

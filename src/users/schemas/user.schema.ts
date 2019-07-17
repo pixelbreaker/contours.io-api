@@ -1,5 +1,5 @@
-import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcrypt';
+import * as mongoose from 'mongoose';
 import { BCRYPT_SALT_ROUNDS } from '../../constants';
 
 export const UserSchema = new mongoose.Schema({
