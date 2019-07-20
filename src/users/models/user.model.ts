@@ -1,8 +1,7 @@
-import { InstanceType, prop, pre, ModelType } from 'typegoose';
+import { BaseModel, schemaOptions } from '../../common/models/basemodel.model';
 import { BCRYPT_SALT_ROUNDS } from '../../constants';
 import { genSalt, hash } from 'bcryptjs';
-import { BaseModel, schemaOptions } from '../../common/models/basemodel.model';
-import { read } from 'fs';
+import { InstanceType, prop, pre, ModelType } from 'typegoose';
 
 @pre('save', async function(next) {
   const salt = await genSalt(BCRYPT_SALT_ROUNDS);

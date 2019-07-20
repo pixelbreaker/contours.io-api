@@ -10,13 +10,13 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { BadRequestFilter } from '../filters/bad-request';
 import { MongoFilter } from '../filters/mongo';
+import { RegisterVm } from './models/registervm-model';
 import { User } from './models/user.model';
 import { UsersService } from './users.service';
-import { AuthGuard } from '@nestjs/passport';
 import { UserVm } from '../users/models/uservm-model';
-import { RegisterVm } from './models/registervm-model';
 
 @Controller('users')
 export class UsersController {
@@ -27,13 +27,11 @@ export class UsersController {
     return this._usersService.findAll();
   }
 
-  // @UseGuards(AuthGuard('jwt'))
-  // @Get('me')
-  // getProfile(@Request() req) {
-  //   console.log(req);
-
-  //   return req.user;
-  // }
+  @UseGuards(AuthGuard('jwt'))
+  @Get('me')
+  getProfile(@Request() req) {
+    return req.user;
+  }
 
   @Get(':id')
   findOne(@Param('id') id): Promise<UserVm | undefined> {

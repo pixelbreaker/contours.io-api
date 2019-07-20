@@ -1,12 +1,12 @@
 import { BaseService } from '../common/base.service';
+import { compare } from 'bcryptjs';
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { JwtService } from '@nestjs/jwt';
 import { ModelType } from 'typegoose';
+import { RegisterVm } from './models/registervm-model';
 import { User } from './models/user.model';
 import { UserVm } from './models/uservm-model';
-import { RegisterVm } from './models/registervm-model';
-import { JwtService } from '@nestjs/jwt';
-import { compare } from 'bcryptjs';
 
 @Injectable()
 export class UsersService extends BaseService<User> {
