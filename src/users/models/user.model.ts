@@ -38,7 +38,7 @@ export class User extends BaseModel<User> {
     return this.model.modelName;
   }
 
-  static createModel(): InstanceType<User> {
-    return new this.model();
+  static createModel(props: User): InstanceType<User> {
+    return new this.model(props);
   }
 }

@@ -1,60 +1,98 @@
 import { BaseService } from '../common/base.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ModelType } from 'typegoose';
-import { pick, omit } from 'lodash';
 import { User } from './models/user.model';
 import { UserVm } from './models/uservm-model';
+import { RegisterVm } from './models/registervm-model';
+import { JwtService } from '@nestjs/jwt';
+import { compare } from 'bcryptjs';
 
 @Injectable()
 export class UsersService extends BaseService<User> {
   constructor(
     @InjectModel(User.modelName) private readonly _userModel: ModelType<User>,
+    private readonly _jwtService: JwtService,
   ) {
     super();
     this._model = _userModel;
   }
 
   async findAll(filter = {}): Promise<UserVm[]> {
-    const results = await super.findAll(filter);
-    const mapped = results.map(item => {
-      return pick(item.toObject(), UserVm.projection);
-    });
-    return mapped;
+    let results;
+    try {
+      results = await super.findAll(filter);
+    } catch (e) {
+      throw new HttpException(
+        'Internal error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    if (results.length === 0) {
+      throw new HttpException('No results', HttpStatus.NO_CONTENT);
+    } else {
+      return results.map(item => UserVm.map(item));
+    }
   }
 
   async findOne(filter = {}): Promise<UserVm> {
-    const result = await super.findOne(filter);
-    return pick(result.toObject(), UserVm.projection);
+    let result;
+    try {
+      result = await super.findOne(filter);
+    } catch (e) {
+      throw new HttpException(
+        'Internal error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+    if (!result) {
+      throw new HttpException('No results', HttpStatus.NO_CONTENT);
+    } else {
+      return UserVm.map(result);
+    }
+  }
+
+  async register(user: RegisterVm): Promise<UserVm> {
+    try {
+      const newUser = await this.create(user);
+      return UserVm.map(newUser, ['email']);
+    } catch (e) {
+      if (e.code === 11000) {
+        throw new HttpException(
+          'Supplied email is already registered',
+          HttpStatus.BAD_REQUEST,
+        );
+      } else {
+        throw new HttpException(
+          'Internal error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+
+  async validateUser(
+    email: string,
+    candidatePassword: string,
+  ): Promise<UserVm> {
+    const user = (await super.findOne({ email })) as User;
+
+    if (user) {
+      const match = await compare(candidatePassword, user.password);
+
+      if (match) {
+        return UserVm.map(user) as UserVm;
+      }
+      return null;
+    }
+    return null;
+  }
+
+  async login(user: User) {
+    const payload = { username: user.email, sub: user._id, role: 0 };
+    return {
+      token: this._jwtService.sign(payload),
+    };
   }
 }
-// export class UsersService {
-//   constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
-
-//   async findAll(): Promise<User[]> {
-//     return await this.userModel.find(null, User.publicProjection());
-//   }
-
-//   async findOne(
-//     query: object,
-//     extraFields: object = null,
-//   ): Promise<User | undefined> {
-//     return await this.userModel
-//       .findOne(query, User.publicProjection(extraFields))
-//       .lean();
-//   }
-
-//   @UseFilters(BadRequestFilter, MongoFilter)
-//   async create(user: User): Promise<User> {
-//     const newUser = new this.userModel(user);
-//     return await newUser.save();
-//   }
-
-//   async delete(id: string): Promise<User> {
-//     return await this.userModel.findByIdAndRemove(id);
-//   }
-
-//   async update(id: string, user: User | object): Promise<User> {
-//     return await this.userModel.findByIdAndUpdate(id, user, { new: true });
-//   }
-// }
