@@ -9,8 +9,6 @@ import {
   UseFilters,
   UseGuards,
   Request,
-  Inject,
-  forwardRef,
 } from '@nestjs/common';
 import { BadRequestFilter } from '../filters/bad-request';
 import { MongoFilter } from '../filters/mongo';
@@ -19,8 +17,6 @@ import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 import { UserVm } from '../users/models/uservm-model';
 import { RegisterVm } from './models/registervm-model';
-import { AuthService } from '../auth/auth.service';
-import { JwtService } from '@nestjs/jwt';
 
 @Controller('users')
 export class UsersController {
