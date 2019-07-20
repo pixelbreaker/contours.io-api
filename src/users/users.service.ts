@@ -15,7 +15,7 @@ export class UsersService extends BaseService<User> {
     private readonly _jwtService: JwtService,
   ) {
     super();
-    this._model = _userModel;
+    this._model = this._userModel;
   }
 
   async findAll(filter = {}): Promise<UserVm[]> {
@@ -36,7 +36,7 @@ export class UsersService extends BaseService<User> {
     }
   }
 
-  async findOne(filter = {}): Promise<UserVm> {
+  async findOne(filter = {}, extraFields = []): Promise<UserVm> {
     let result;
     try {
       result = await super.findOne(filter);
@@ -49,7 +49,7 @@ export class UsersService extends BaseService<User> {
     if (!result) {
       throw new HttpException('No results', HttpStatus.NO_CONTENT);
     } else {
-      return UserVm.map(result);
+      return UserVm.map(result, extraFields);
     }
   }
 
@@ -72,17 +72,15 @@ export class UsersService extends BaseService<User> {
     }
   }
 
-  async validateUser(
-    email: string,
-    candidatePassword: string,
-  ): Promise<UserVm> {
+  async validateUser(email: string, candidatePassword: string): Promise<User> {
     const user = (await super.findOne({ email })) as User;
+    console.log(user);
 
     if (user) {
       const match = await compare(candidatePassword, user.password);
 
       if (match) {
-        return UserVm.map(user) as UserVm;
+        return user;
       }
       return null;
     }

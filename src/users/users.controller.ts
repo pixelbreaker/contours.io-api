@@ -38,12 +38,6 @@ export class UsersController {
     return this._usersService.findOne({ _id: id });
   }
 
-  // @Post()
-  // @UseFilters(BadRequestFilter, MongoFilter)
-  // create(@Body() user: User): Promise<User> {
-  //   return this._usersService.create(user);
-  // }
-
   @Post()
   @UseFilters(BadRequestFilter, MongoFilter)
   register(@Body() user: RegisterVm): Promise<UserVm> {

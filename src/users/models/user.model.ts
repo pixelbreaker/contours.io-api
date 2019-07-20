@@ -2,6 +2,7 @@ import { BaseModel, schemaOptions } from '../../common/models/basemodel.model';
 import { BCRYPT_SALT_ROUNDS } from '../../constants';
 import { genSalt, hash } from 'bcryptjs';
 import { InstanceType, prop, pre, ModelType } from 'typegoose';
+import { UserRole } from './user-role.enum';
 
 @pre('save', async function(next) {
   const salt = await genSalt(BCRYPT_SALT_ROUNDS);
@@ -20,16 +21,10 @@ export class User extends BaseModel<User> {
   @prop({ required: true, index: true, unique: true })
   email: string;
 
+  @prop({ enum: UserRole, default: UserRole.User })
+  role?: UserRole;
+
   static get model(): ModelType<User> {
-    // const options = {
-    //   ...schemaOptions,
-    //   toObject: {
-    //     transform: (doc, ret) => {
-    //       const { _id, password, ...rest } = ret;
-    //       return rest;
-    //     },
-    //   },
-    // };
     return new User().getModelForClass(User, { schemaOptions });
   }
 
