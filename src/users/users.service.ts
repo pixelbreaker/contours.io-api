@@ -54,22 +54,8 @@ export class UsersService extends BaseService<User> {
   }
 
   async register(user: RegisterVm): Promise<UserVm> {
-    try {
-      const newUser = await this.create(user);
-      return UserVm.map(newUser, ['email']);
-    } catch (e) {
-      if (e.code === 11000) {
-        throw new HttpException(
-          'Supplied email is already registered',
-          HttpStatus.BAD_REQUEST,
-        );
-      } else {
-        throw new HttpException(
-          'Internal error',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    }
+    const newUser = await this.create(user);
+    return UserVm.map(newUser, ['email']);
   }
 
   async validateUser(email: string, candidatePassword: string): Promise<User> {
@@ -88,7 +74,7 @@ export class UsersService extends BaseService<User> {
   }
 
   async login(user: User) {
-    const payload = { username: user.email, sub: user._id, role: 0 };
+    const payload = { username: user.email, sub: user._id, role: user.role };
     return {
       token: this._jwtService.sign(payload),
     };

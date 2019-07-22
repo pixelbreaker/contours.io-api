@@ -11,10 +11,13 @@ import {
   Request,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { BadRequestFilter } from '../filters/bad-request';
-import { MongoFilter } from '../filters/mongo';
+import { BadRequestFilter } from '../common/filters/bad-request';
+import { MongoFilter } from '../common/filters/mongo';
 import { RegisterVm } from './models/registervm-model';
+import { Roles } from '../common/guards/roles.decorator';
+import { RolesGuard } from '../common/guards/roles.guard';
 import { User } from './models/user.model';
+import { UserRole } from './models/user-role.enum';
 import { UsersService } from './users.service';
 import { UserVm } from '../users/models/uservm-model';
 
@@ -34,6 +37,9 @@ export class UsersController {
   }
 
   @Get(':id')
+  @UseFilters(BadRequestFilter, MongoFilter)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.Admin, UserRole.User)
   findOne(@Param('id') id): Promise<UserVm | undefined> {
     return this._usersService.findOne({ _id: id });
   }
@@ -51,8 +57,10 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @UseFilters(BadRequestFilter, MongoFilter)
-  delete(@Param('id') id): Promise<User> {
+  @UseGuards(AuthGuard('jwt'))
+  delete(@Param('id') id, @Request() req): Promise<User> {
+    console.log(req);
+
     return this._usersService.delete(id);
   }
 

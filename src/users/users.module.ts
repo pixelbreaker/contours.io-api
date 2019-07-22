@@ -6,6 +6,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User } from './models/user.model';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from '../common/guards/roles.guard';
 
 @Module({
   imports: [
@@ -18,7 +20,16 @@ import { UsersService } from './users.service';
     }),
   ],
   controllers: [UsersController],
-  providers: [UsersService, LocalStrategy, JwtStrategy],
+  providers: [
+    UsersService,
+    LocalStrategy,
+    JwtStrategy,
+    RolesGuard,
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
+  ],
   exports: [UsersService],
 })
 export class UsersModule {}
