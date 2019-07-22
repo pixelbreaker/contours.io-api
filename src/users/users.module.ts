@@ -3,11 +3,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { RolesGuard } from '../common/guards/roles.guard';
 import { User } from './models/user.model';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from '../common/guards/roles.guard';
 
 @Module({
   imports: [
@@ -20,16 +19,7 @@ import { RolesGuard } from '../common/guards/roles.guard';
     }),
   ],
   controllers: [UsersController],
-  providers: [
-    UsersService,
-    LocalStrategy,
-    JwtStrategy,
-    RolesGuard,
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: RolesGuard,
-    // },
-  ],
+  providers: [UsersService, LocalStrategy, JwtStrategy, RolesGuard],
   exports: [UsersService],
 })
 export class UsersModule {}
