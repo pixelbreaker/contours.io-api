@@ -1,14 +1,15 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
   Put,
-  Delete,
-  Body,
-  Param,
+  Request,
   UseFilters,
   UseGuards,
-  Request,
+  Options,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { BadRequestFilter } from '../common/filters/bad-request';
@@ -25,10 +26,10 @@ import { UserVm } from '../users/models/uservm-model';
 export class UsersController {
   constructor(private readonly _usersService: UsersService) {}
 
-  @Get()
-  findAll(): Promise<UserVm[]> {
-    return this._usersService.findAll();
-  }
+  // @Get()
+  // findAll(): Promise<UserVm[]> {
+  //   return this._usersService.findAll();
+  // }
 
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
@@ -39,7 +40,7 @@ export class UsersController {
   @Get(':id')
   @UseFilters(BadRequestFilter, MongoFilter)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.Admin, UserRole.User)
+  @Roles(UserRole.Admin)
   findOne(@Param('id') id): Promise<UserVm | undefined> {
     return this._usersService.findOne({ _id: id });
   }
@@ -59,8 +60,6 @@ export class UsersController {
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
   delete(@Param('id') id, @Request() req): Promise<User> {
-    console.log(req);
-
     return this._usersService.delete(id);
   }
 
