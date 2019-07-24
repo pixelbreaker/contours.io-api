@@ -15,13 +15,13 @@ export class User extends BaseModel<User> {
   @prop({ required: true })
   username: string;
 
-  @prop({ required: true })
+  @prop({ required: true, select: false })
   password: string;
 
-  @prop({ required: true, index: true, unique: true })
+  @prop({ required: true, index: true, unique: true, select: false })
   email: string;
 
-  @prop({ enum: UserRole, default: UserRole.User })
+  @prop({ enum: UserRole, default: UserRole.User, select: false })
   role?: UserRole;
 
   static get model(): ModelType<User> {

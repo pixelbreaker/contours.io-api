@@ -6,10 +6,10 @@ import { Typegoose, prop, pre } from 'typegoose';
 export class BaseModel<T> extends Typegoose {
   _id: string;
 
-  @prop()
+  @prop({ select: false })
   createdAt: Date;
 
-  @prop()
+  @prop({ select: false })
   updatedAt: Date;
 }
 

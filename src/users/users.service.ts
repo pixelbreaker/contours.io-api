@@ -6,7 +6,6 @@ import { JwtService } from '@nestjs/jwt';
 import { ModelType } from 'typegoose';
 import { RegisterVm } from './models/registervm-model';
 import { User } from './models/user.model';
-import { UserVm } from './models/uservm-model';
 
 @Injectable()
 export class UsersService extends BaseService<User> {
@@ -18,10 +17,10 @@ export class UsersService extends BaseService<User> {
     this._model = this._userModel;
   }
 
-  async findAll(filter = {}): Promise<UserVm[]> {
+  async findAll(filter = {}, selectFields = ''): Promise<User[]> {
     let results;
     try {
-      results = await super.findAll(filter);
+      results = await super.findAll(filter, selectFields);
     } catch (e) {
       throw new HttpException(
         'Internal error',
@@ -32,14 +31,14 @@ export class UsersService extends BaseService<User> {
     if (results.length === 0) {
       throw new HttpException('No results', HttpStatus.NO_CONTENT);
     } else {
-      return results.map(item => UserVm.map(item));
+      return results;
     }
   }
 
-  async findOne(filter = {}, extraFields = []): Promise<UserVm> {
+  async findOne(filter = {}, selectFields = ''): Promise<User> {
     let result;
     try {
-      result = await super.findOne(filter);
+      result = await super.findOne(filter, selectFields);
     } catch (e) {
       throw new HttpException(
         'Internal error',
@@ -49,13 +48,13 @@ export class UsersService extends BaseService<User> {
     if (!result) {
       throw new HttpException('No results', HttpStatus.NO_CONTENT);
     } else {
-      return UserVm.map(result, extraFields);
+      return result;
     }
   }
 
-  async register(user: RegisterVm): Promise<UserVm> {
-    const newUser = await this.create(user);
-    return UserVm.map(newUser, ['email']);
+  async register(user: RegisterVm): Promise<User> {
+    const newUser = await this.create(user, '+email');
+    return newUser;
   }
 
   async validateUser(email: string, candidatePassword: string): Promise<User> {

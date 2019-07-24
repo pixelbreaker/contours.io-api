@@ -8,7 +8,5 @@ export class UserVm extends BaseModelVm {
   email: string;
   role: UserRole;
 
-  public static map(props, extraFields = []) {
-    return pick(props, ['_id', 'username', ...extraFields]) as UserVm;
-  }
+  public static selectFields = '-email -password';
 }

@@ -31,10 +31,10 @@ export class UsersController {
   //   return this._usersService.findAll();
   // }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get('me')
+  @UseGuards(AuthGuard('jwt'))
   getProfile(@Request() req) {
-    return req.user;
+    return this._usersService.findOne({ _id: req.user._id }, '+role +email');
   }
 
   @Get(':id')
@@ -59,12 +59,14 @@ export class UsersController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
+  @Roles(UserRole.Admin)
   delete(@Param('id') id, @Request() req): Promise<User> {
     return this._usersService.delete(id);
   }
 
   @Put(':id')
   @UseFilters(BadRequestFilter, MongoFilter)
+  @Roles(UserRole.Admin, UserRole.User)
   update(@Body() updateUser: User, @Param('id') id): Promise<User> {
     return this._usersService.update(id, updateUser);
   }
