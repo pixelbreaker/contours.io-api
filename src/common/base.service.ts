@@ -4,14 +4,6 @@ import { Types } from 'mongoose';
 export abstract class BaseService<T extends Typegoose> {
   protected _model: ModelType<T>;
 
-  private get modelName(): string {
-    return this._model.modelName;
-  }
-
-  private get viewModelName(): string {
-    return `${this._model.modelName}Vm`;
-  }
-
   async findAll(
     filter = {},
     selectFields = '',
