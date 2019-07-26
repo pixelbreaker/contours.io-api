@@ -9,7 +9,6 @@ import {
   Request,
   UseFilters,
   UseGuards,
-  Options,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { BadRequestFilter } from '../common/filters/bad-request';
@@ -20,7 +19,6 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { User } from './models/user.model';
 import { UserRole } from './models/user-role.enum';
 import { UsersService } from './users.service';
-import { UserVm } from '../users/models/uservm-model';
 
 @Controller('users')
 export class UsersController {
@@ -41,13 +39,13 @@ export class UsersController {
   @UseFilters(BadRequestFilter, MongoFilter)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.Admin)
-  findOne(@Param('id') id): Promise<UserVm | undefined> {
+  findOne(@Param('id') id): Promise<User | undefined> {
     return this._usersService.findOne({ _id: id });
   }
 
   @Post()
   @UseFilters(BadRequestFilter, MongoFilter)
-  register(@Body() user: RegisterVm): Promise<UserVm> {
+  register(@Body() user: RegisterVm): Promise<User> {
     return this._usersService.register(user);
   }
 

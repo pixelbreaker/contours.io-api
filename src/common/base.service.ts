@@ -30,6 +30,7 @@ export abstract class BaseService<T extends Typegoose> {
     selectFields = '',
   ): Promise<InstanceType<T>> {
     const newItem = await this._model.create(item);
+    console.log(newItem);
 
     return this._model.findOne({ _id: newItem._id }).select(selectFields);
   }

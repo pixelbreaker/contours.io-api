@@ -58,8 +58,10 @@ export class UsersService extends BaseService<User> {
   }
 
   async validateUser(email: string, candidatePassword: string): Promise<User> {
-    const user = (await super.findOne({ email })) as User;
-    console.log(user);
+    const user = (await super.findOne(
+      { email },
+      '+password +role +email',
+    )) as User;
 
     if (user) {
       const match = await compare(candidatePassword, user.password);
