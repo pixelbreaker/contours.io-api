@@ -1,6 +1,7 @@
 import { BaseModel, schemaOptions } from '../../common/models/basemodel.model';
 import { InstanceType, prop, pre, ModelType } from 'typegoose';
 import { EventType } from './Event-type.enum';
+import { LatLon } from '../../common/types';
 
 @pre('save', async function(next) {
   if (!this.slug) {
@@ -19,11 +20,14 @@ export class EventModel extends BaseModel<EventModel> {
   @prop({ required: true })
   title: string;
 
-  @prop({ select: false })
-  slug?: string;
+  @prop({ select: false, unique: true })
+  slug: string;
 
   @prop({ required: true, enum: EventType, default: EventType.UltraBike })
   type: EventType;
+
+  @prop({ required: true })
+  startLocation: LatLon;
 
   static get model(): ModelType<EventModel> {
     return new EventModel().getModelForClass(EventModel, { schemaOptions });

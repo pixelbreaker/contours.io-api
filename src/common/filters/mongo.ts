@@ -5,10 +5,12 @@ import { MongoError } from 'mongodb';
 export class MongoFilter implements ExceptionFilter {
   catch(exception: MongoError, host: ArgumentsHost) {
     const response = host.switchToHttp().getResponse();
+
     if (exception.code === 11000) {
+      const field = exception.errmsg.split('index: ')[1].split(/_\d/)[0];
       response
         .status(422)
-        .json({ message: 'User already exists with that email.' });
+        .json({ message: `Item already exists with that ${field}.` });
     } else {
       response.status(500).json({ message: 'Internal error.' });
     }
