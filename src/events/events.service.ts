@@ -13,4 +13,12 @@ export class EventsService extends BaseService<EventModel> {
     super();
     this._model = this._eventModel;
   }
+
+  async findOne(filter = {}, selectFields = ''): Promise<EventModel> {
+    return this._model
+      .findOne(filter)
+      .populate('owner', 'username firstname lastname')
+      .select(selectFields.trim())
+      .exec();
+  }
 }

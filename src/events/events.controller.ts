@@ -1,4 +1,12 @@
-import { Controller, Post, UseFilters, UseGuards, Body } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseFilters,
+  UseGuards,
+  Body,
+  Param,
+  Get,
+} from '@nestjs/common';
 import { EventsService } from './events.service';
 import { EventModel } from './models/event.model';
 import { AuthGuard } from '@nestjs/passport';
@@ -17,6 +25,13 @@ export class EventsController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.Admin)
   async create(@Body() event: EventModel): Promise<EventModel> {
-    return this._eventsService.create(event);
+    const newEvent = await this._eventsService.create(event);
+    return this._eventsService.findOne({ _id: newEvent._id });
+  }
+
+  @Get(':id')
+  @UseFilters(BadRequestFilter, MongoFilter)
+  async get(@Param('id') id: string): Promise<EventModel> {
+    return this._eventsService.findOne({ _id: id });
   }
 }

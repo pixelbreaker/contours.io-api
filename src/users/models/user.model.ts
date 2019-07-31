@@ -4,7 +4,7 @@ import { genSalt, hash } from 'bcryptjs';
 import { InstanceType, prop, pre, ModelType } from 'typegoose';
 import { UserRole } from './user-role.enum';
 
-@pre('save', async function(next) {
+@pre<User>('save', async function(next) {
   const salt = await genSalt(BCRYPT_SALT_ROUNDS);
   const hashed = await hash(this.password, salt);
   this.password = hashed;
@@ -12,8 +12,19 @@ import { UserRole } from './user-role.enum';
   next();
 })
 export class User extends BaseModel<User> {
-  @prop({ required: true })
+  @prop({ required: true, unique: true })
   username: string;
+
+  @prop({ required: true })
+  firstname: string;
+
+  @prop()
+  lastname?: string;
+
+  @prop()
+  get fullname(): string {
+    return `${this.firstname} ${this.lastname}`.trim();
+  }
 
   @prop({ required: true, select: false })
   password: string;
