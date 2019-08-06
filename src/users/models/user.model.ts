@@ -23,7 +23,7 @@ export class User extends BaseModel<User> {
 
   @prop()
   get fullname(): string {
-    return `${this.firstname} ${this.lastname}`.trim();
+    return `${this.firstname} ${this.lastname || ''}`.trim();
   }
 
   @prop({ required: true, select: false })

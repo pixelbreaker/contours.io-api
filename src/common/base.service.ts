@@ -30,14 +30,17 @@ export abstract class BaseService<T extends Typegoose> {
     selectFields = '',
   ): Promise<InstanceType<T>> {
     const newItem = await this._model.create(item);
-    console.log(newItem);
 
     return this._model.findOne({ _id: newItem._id }).select(selectFields);
   }
 
-  async update(id: string, item: InstanceType<T>): Promise<InstanceType<T>> {
+  async update(
+    id: string,
+    item: InstanceType<T>,
+    newModel: boolean = true,
+  ): Promise<InstanceType<T>> {
     return this._model
-      .findByIdAndUpdate(this.toObjectId(id), item, { new: true })
+      .findByIdAndUpdate(this.toObjectId(id), item, { new: newModel })
       .exec();
   }
 

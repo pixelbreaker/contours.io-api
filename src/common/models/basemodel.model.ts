@@ -4,7 +4,7 @@ import { Typegoose, prop, pre } from 'typegoose';
   this._update.updatedAt = new Date(Date.now());
 })
 export class BaseModel<T> extends Typegoose {
-  _id: string;
+  // _id: string;
 
   @prop({ select: false })
   createdAt: Date;

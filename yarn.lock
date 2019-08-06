@@ -5189,10 +5189,10 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typegoose@^5.8.1:
-  version "5.8.1"
-  resolved "https://registry.yarnpkg.com/typegoose/-/typegoose-5.8.1.tgz#b9b4d13d41a01e860e7716f0ecf818d854df3ea1"
-  integrity sha512-qRXohOShQf6yAxmBfL3c/A08w82iIOKvFAPjz5j+SaMmGNstz4lGdM43rN8tr4SPKSDZYN5EehDpWSU4yHWLTQ==
+typegoose@^5.9.0:
+  version "5.9.0"
+  resolved "https://registry.yarnpkg.com/typegoose/-/typegoose-5.9.0.tgz#e4b2cdfe4cffe6c2a54be4133a3d67fcda4d6a32"
+  integrity sha512-oczsIaQeT24rxbFfWIq/qyrCFYt1wLG5lgu9GLgeF0X9y07C8l/f2uk1+wDLVroz9j3SlK9jpz6j00kSFogzMg==
   dependencies:
     reflect-metadata "^0.1.13"
 
