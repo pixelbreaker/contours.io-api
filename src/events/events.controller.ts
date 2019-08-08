@@ -29,6 +29,7 @@ export class EventsController {
   @Post()
   @UseFilters(BadRequestFilter, MongoFilter)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
+  // TODO Add guard so only owner/admin can edit
   @Roles(UserRole.Admin)
   async create(@Body() event: EventModel): Promise<EventModel> {
     const newEvent = await this._eventsService.create(event);
