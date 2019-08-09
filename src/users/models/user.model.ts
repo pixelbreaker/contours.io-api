@@ -1,7 +1,7 @@
 import { BaseModel, schemaOptions } from '../../common/models/basemodel.model';
 import { BCRYPT_SALT_ROUNDS } from '../../constants';
 import { genSalt, hash } from 'bcryptjs';
-import { InstanceType, prop, pre, ModelType } from 'typegoose';
+import { InstanceType, prop, pre, ModelType, arrayProp } from 'typegoose';
 import { UserRole } from './user-role.enum';
 
 @pre<User>('save', async function(next) {
@@ -32,8 +32,13 @@ export class User extends BaseModel<User> {
   @prop({ required: true, index: true, unique: true, select: false })
   email: string;
 
-  @prop({ enum: UserRole, default: UserRole.User, select: false })
-  role?: UserRole;
+  @arrayProp({
+    items: String,
+    enum: UserRole,
+    default: UserRole.User,
+    select: false,
+  })
+  roles?: UserRole[];
 
   static get model(): ModelType<User> {
     return new User().getModelForClass(User, { schemaOptions });

@@ -1,15 +1,15 @@
 import { BaseModel, schemaOptions } from '../../common/models/basemodel.model';
-import { InstanceType, prop, pre, ModelType, Ref, arrayProp } from 'typegoose';
+import { Entrant } from '../../entrants/models/entrant.model';
 import { EventType } from './Event-type.enum';
+import { InstanceType, prop, pre, ModelType, Ref, arrayProp } from 'typegoose';
 import { LatLon } from '../../common/types';
+import { Length } from 'class-validator';
 import { Types } from 'mongoose';
 import { User } from '../../users/models/user.model';
-import { Length } from 'class-validator';
-import { Entrant } from '../../entrants/models/entrant.model';
 
 @pre<EventModel>('save', async function(next) {
-  if (typeof this.owner === 'string') {
-    this.owner = Types.ObjectId(this.owner);
+  if (typeof this.organiser === 'string') {
+    this.organiser = Types.ObjectId(this.organiser);
   }
   if (!this.slug) {
     this.slug = this.title
@@ -22,7 +22,7 @@ import { Entrant } from '../../entrants/models/entrant.model';
 })
 export class EventModel extends BaseModel<EventModel> {
   @prop({ required: true, ref: User })
-  owner: Ref<User>;
+  organiser: Ref<User>;
 
   @prop({ required: true })
   @Length(8, 200)

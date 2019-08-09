@@ -1,23 +1,25 @@
 import {
+  Body,
   Controller,
+  Get,
+  Param,
   Post,
+  Put,
   UseFilters,
   UseGuards,
-  Body,
-  Param,
-  Get,
-  Put,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { BadRequestFilter } from '../common/filters/bad-request';
+import { Entrant } from '../entrants/models/entrant.model';
 import { EntrantsService } from '../entrants/entrants.service';
 import { EventModel } from './models/event.model';
+import { EventOrganiser } from '../common/guards/eventorganiser.decorator';
+import { EventOrganiserGuard } from '../common/guards/eventorganiser.guard';
 import { EventsService } from './events.service';
 import { MongoFilter } from '../common/filters/mongo';
 import { Roles } from '../common/guards/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { UserRole } from '../users/models/user-role.enum';
-import { Entrant } from '../entrants/models/entrant.model';
 
 @Controller('events')
 export class EventsController {
@@ -29,7 +31,6 @@ export class EventsController {
   @Post()
   @UseFilters(BadRequestFilter, MongoFilter)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  // TODO Add guard so only owner/admin can edit
   @Roles(UserRole.Admin)
   async create(@Body() event: EventModel): Promise<EventModel> {
     const newEvent = await this._eventsService.create(event);
@@ -38,6 +39,9 @@ export class EventsController {
 
   @Put(':id/entrant')
   @UseFilters(BadRequestFilter, MongoFilter)
+  @UseGuards(AuthGuard('jwt'), RolesGuard, EventOrganiserGuard)
+  @EventOrganiser() // Only Admin and the event owner can edit this event
+  @Roles(UserRole.Admin, UserRole.Organiser)
   async addEntrant(
     @Param('id') id: string,
     @Body() entrant: Entrant,

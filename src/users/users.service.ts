@@ -60,7 +60,7 @@ export class UsersService extends BaseService<User> {
   async validateUser(email: string, candidatePassword: string): Promise<User> {
     const user = (await super.findOne(
       { email },
-      '+password +role +email',
+      '+password +roles +email',
     )) as User;
 
     if (user) {
@@ -75,7 +75,7 @@ export class UsersService extends BaseService<User> {
   }
 
   async login(user: User) {
-    const payload = { username: user.email, sub: user._id, role: user.role };
+    const payload = { username: user.email, sub: user._id, roles: user.roles };
     return {
       token: this._jwtService.sign(payload),
     };

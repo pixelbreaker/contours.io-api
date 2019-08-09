@@ -18,7 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       {
         _id: payload.sub,
       },
-      '+role +password',
+      '+roles +password',
     );
     if (!user) {
       throw new UnauthorizedException();

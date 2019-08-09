@@ -1,9 +1,9 @@
 import { BaseService } from '../common/base.service';
+import { Entrant } from '../entrants/models/entrant.model';
 import { EventModel } from './models/event.model';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ModelType } from 'typegoose';
-import { Entrant } from '../entrants/models/entrant.model';
 import { User } from '../users/models/user.model';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class EventsService extends BaseService<EventModel> {
   async findOne(filter = {}, selectFields = ''): Promise<EventModel> {
     const eventItem = await this._model
       .findOne(filter)
-      .populate('owner', 'username firstname lastname')
+      .populate('organiser', 'username firstname lastname')
       .populate({
         path: 'entrants',
         populate: {
@@ -41,7 +41,7 @@ export class EventsService extends BaseService<EventModel> {
     );
     return await this._model
       .findOne({ _id: id })
-      .populate('owner', 'username firstname lastname')
+      .populate('organiser', 'username firstname lastname')
       .populate({
         path: 'entrants',
         populate: {
