@@ -11,25 +11,24 @@ export class EventOrganiserGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const organiser = this.reflector.get<boolean>(
-      'organiser',
-      context.getHandler(),
-    );
+    const organiser: {
+      organiser: boolean;
+      roles: string[];
+    } = this.reflector.get<any>('organiser', context.getHandler());
     if (!organiser) {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest();
-    const user = request.user;
-    const id = request.params.id;
+    const { user, params } = context.switchToHttp().getRequest();
 
-    const userid = user._id;
+    if (organiser.roles) {
+      const hasRole = () =>
+        user.roles.some(role => organiser.roles.includes(role));
 
-    // if (user.role === UserRole.Admin) {
-    //   return true;
-    // }
-    const event = await this._eventsService.findOne({ _id: id });
-    if (event && event.organiser._id.toString() !== userid.toString()) {
+      return user && user.roles && hasRole();
+    }
+    const event = await this._eventsService.findOne({ _id: params.id });
+    if (event && event.organiser._id.toString() !== user._id.toString()) {
       return false;
     }
     return true;

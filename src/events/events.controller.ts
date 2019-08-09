@@ -40,7 +40,7 @@ export class EventsController {
   @Put(':id/entrant')
   @UseFilters(BadRequestFilter, MongoFilter)
   @UseGuards(AuthGuard('jwt'), RolesGuard, EventOrganiserGuard)
-  @EventOrganiser() // Only Admin and the event owner can edit this event
+  @EventOrganiser(UserRole.Admin) // Only Admin and the event owner can edit this event
   @Roles(UserRole.Admin, UserRole.Organiser)
   async addEntrant(
     @Param('id') id: string,
